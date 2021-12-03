@@ -1,0 +1,15 @@
+[
+    {
+      "id": 1,
+      "email": "tarieladze99@gmail.com",
+      "password": "1234",
+      "role": "Admin"
+    },
+    {
+      "id": 2,
+      "email": "tarieladze@gmail.com",
+      "password": "1234",
+      "role": "Editor"
+    }
+
+  ]

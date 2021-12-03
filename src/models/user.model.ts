@@ -1,29 +1,45 @@
 import * as mongoose from 'mongoose';
 
 export const userSchema = new mongoose.Schema({
-  email: {
+  name: {
     type: String,
     required: true,
   },
-  role: {
+  surname: {
     type: String,
-    default: 'Editor',
+    required: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
   },
   password: {
     type: String,
     required: true,
   },
-  education: [
+  myTires: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'educations',
+      ref: 'tires',
+    },
+  ],
+  favorite: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'tires',
     },
   ],
 });
 
 export interface IUser extends mongoose.Document {
   _id: string;
+  name: string;
+  surname: string;
+  phone: string;
   email: string;
-  role: string;
   password: string;
 }

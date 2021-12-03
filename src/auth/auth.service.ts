@@ -1,12 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { AuthDto } from 'dto/auth.dto';
 import { IUser } from 'models/user.model';
 import { Model } from 'mongoose';
-
-// eslint-disable-next-line
-const users = require('./../../user.json');
 
 @Injectable()
 export class AuthService {
@@ -16,23 +17,26 @@ export class AuthService {
   ) {}
 
   async signinLocal(dto: AuthDto) {
-    console.log(dto);
-    const user = await this.userModel.findOne({ email: dto.email });
-    console.log(user);
-    if (!user) throw new UnauthorizedException('Credentials incorrect');
-    if (user.password !== dto.password)
-      throw new UnauthorizedException('Credentials incorrect');
+    try {
+      console.log(dto);
+      const user = await this.userModel.findOne({ email: dto.email });
+      console.log(user);
+      if (!user) throw new UnauthorizedException('Credentials incorrect');
+      if (user.password !== dto.password)
+        throw new UnauthorizedException('Credentials incorrect');
 
-    return this.signUser(user._id, user.email, user.role);
+      return this.signUser(user._id, user.email);
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
-  signUser(userID: string, email: string, role: string) {
+  signUser(userID: string, email: string) {
     return {
       success: true,
       access_token: this.jwtService.sign({
         userID,
         email,
-        role,
       }),
     };
   }

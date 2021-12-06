@@ -1,12 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthDto } from 'dto/auth.dto';
+import { TAuth } from 'interface/response.interface';
 import { AuthService } from './auth.service';
 
-interface TAuth {
-  success: boolean;
-  access_token: string;
-}
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {

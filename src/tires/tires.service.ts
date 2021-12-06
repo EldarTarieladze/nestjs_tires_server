@@ -20,8 +20,10 @@ export class TiresService {
   ) {}
 
   async addTire(userID: string, tire: TireDto) {
+    const newTT = { ...tire, userID: userID };
+    console.log(newTT);
     try {
-      const newTire = await this.tireModel.create(tire);
+      const newTire = await this.tireModel.create({ ...tire, userID: userID });
       const addTireToUser = await this.userModel.findByIdAndUpdate(userID, {
         $push: {
           myTires: newTire._id,
@@ -33,7 +35,10 @@ export class TiresService {
           description: 'authorization failed',
         });
       await newTire.save();
-      return 'Tire add successfully!';
+      return {
+        success: true,
+        msg: 'Tire add successfully!',
+      };
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException();
@@ -62,6 +67,15 @@ export class TiresService {
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException();
+    }
+  }
+
+  async getPopulateTires() {
+    try {
+      const tires = await this.tireModel.find();
+      return tires;
+    } catch (error) {
+      console.log(error);
     }
   }
 }

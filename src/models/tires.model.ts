@@ -7,7 +7,7 @@ export const photoSchema = new mongoose.Schema({
 });
 
 export const tiresSchema = new mongoose.Schema({
-  userId: {
+  userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'users',
   },

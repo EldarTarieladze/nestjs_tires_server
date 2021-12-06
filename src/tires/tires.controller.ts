@@ -23,13 +23,24 @@ import { TiresService } from './tires.service';
 import { v4 as uuidv4 } from 'uuid';
 import { Observable } from 'rxjs';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { TTireADD } from 'interface/response.interface';
+import fs from 'fs';
 
 export const storage = {
   storage: diskStorage({
-    destination: './src/uploads',
+    destination: './uploads',
     filename: (req, file, cb) => {
+      const user = JSON.parse(JSON.stringify(req.user));
+      if (!fs.existsSync(`./uploads/${user.userID}`)) {
+        fs.mkdirSync(`./uploads/${user.userID}`, {
+          recursive: true,
+        });
+      }
       const filename: string =
-        path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+        `${user.userID}` +
+        '/' +
+        path.parse(file.originalname).name.replace(/\s/g, '') +
+        uuidv4();
       const extension: string = path.parse(file.originalname).ext;
 
       cb(null, `${filename}${extension}`);
@@ -37,15 +48,27 @@ export const storage = {
   }),
 };
 
-@Controller('my-tires')
+@Controller('')
 export class TiresController {
   constructor(private readonly tiresService: TiresService) {}
 
   @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
-  @Post()
-  async addTire(@Req() req, @Body() tire: TireDto): Promise<string> {
-    return await this.tiresService.addTire(req.user.userID, tire);
+  @Post('tire-add')
+  @UseInterceptors(FilesInterceptor('file', 10, storage))
+  async addTire(
+    @UploadedFiles() file,
+    @Request() req,
+    @Body() tire: TireDto,
+  ): Promise<any> {
+    const fileNameOnly = file.map((item) => {
+      return item.filename;
+    });
+    console.log(tire, 'test');
+    // const newTire: TireDto = JSON.parse(tire);
+    // newTire.photos = fileNameOnly;
+    return;
+    // return await this.tiresService.addTire(req.user.userID, newTire);
   }
 
   @ApiBearerAuth('access-token')
@@ -72,5 +95,11 @@ export class TiresController {
     console.log(file);
 
     return file;
+  }
+
+  @Get('tires/popular')
+  async getPopularTires(): Promise<any> {
+    const tires = await this.tiresService.getPopulateTires();
+    return { tires };
   }
 }

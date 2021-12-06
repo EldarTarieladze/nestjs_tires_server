@@ -42,6 +42,7 @@ export class ValidationFilter implements ExceptionFilter {
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.setGlobalPrefix('/api');
+  app.enableCors();
   const config = new DocumentBuilder()
     .setTitle('NestJS Passport-jwt')
     .setDescription('The NestJS Passport-jwt API description')
@@ -75,9 +76,9 @@ async function bootstrap() {
       },
     }),
   );
-  app.useStaticAssets(join(__dirname, '..', 'public'), {
+  app.useStaticAssets(join(__dirname, '../', 'uploads'), {
     index: false,
-    prefix: '/public',
+    prefix: '/uploads',
   });
   await app.listen(3002);
 }

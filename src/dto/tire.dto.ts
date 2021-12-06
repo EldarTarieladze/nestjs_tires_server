@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsArray } from 'class-validator';
 
 export class TireDto {
   @ApiProperty()
@@ -6,6 +7,9 @@ export class TireDto {
 
   @ApiProperty()
   tireWidth: string;
+
+  @ApiProperty()
+  price: string;
 
   @ApiProperty()
   aspectRatio: string;
@@ -20,5 +24,6 @@ export class TireDto {
   mainPhoto: string;
 
   @ApiProperty()
-  photos: string;
+  @IsArray()
+  photos: [];
 }

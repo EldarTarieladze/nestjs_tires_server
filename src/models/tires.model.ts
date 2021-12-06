@@ -11,6 +11,10 @@ export const tiresSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'users',
   },
+  price: {
+    type: String,
+    required: true,
+  },
   tireType: {
     type: String,
     required: true,
@@ -34,7 +38,9 @@ export const tiresSchema = new mongoose.Schema({
   mainPhoto: {
     type: String,
   },
-  photos: [photoSchema],
+  photos: {
+    type: Array,
+  },
 });
 
 export interface ITireImage extends mongoose.Document {
@@ -44,9 +50,10 @@ export interface ITire extends mongoose.Document {
   _id: string;
   tireType: string;
   tireWidth: string;
+  price: string;
   aspectRatio: string;
   wheelDiameter: string;
   tireSize: string;
   mainPhoto: string;
-  photos: ITireImage[];
+  photos: [];
 }

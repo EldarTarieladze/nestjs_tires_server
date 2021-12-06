@@ -45,7 +45,7 @@ export class TiresService {
         userID: userID,
         _id: tireID,
       });
-      if (!tire) throw new ForbiddenException();
+      if (!tire) throw new NotFoundException();
       return tire;
     } catch (error) {
       console.log(error);

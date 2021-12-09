@@ -26,9 +26,9 @@ export class TireDto {
   @ApiProperty()
   tireSize: string;
 
-  @IsNotEmpty()
-  @ApiProperty()
-  mainPhoto: string;
+  // @IsNotEmpty()
+  // @ApiProperty()
+  // mainPhoto: string;
 
   // @ApiProperty()
   // @IsArray()

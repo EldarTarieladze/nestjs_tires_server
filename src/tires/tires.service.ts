@@ -9,6 +9,8 @@ import { TireDto } from 'dto/tire.dto';
 import { ITire } from 'models/tires.model';
 import { IUser } from 'models/user.model';
 import { Model } from 'mongoose';
+import * as fs from 'fs';
+import { Key } from 'readline';
 
 @Injectable()
 export class TiresService {
@@ -34,14 +36,25 @@ export class TiresService {
         throw new NotFoundException({
           description: 'authorization failed',
         });
-      await newTire.save();
+      newTire.photos.map((element) => {
+        if (!fs.existsSync(`./uploads/${newTire._id}`)) {
+          fs.mkdirSync(`./uploads/${newTire._id}`, {
+            recursive: true,
+          });
+        }
+        fs.renameSync(
+          `./tmp/${element}`,
+          `./uploads/${newTire._id}/${element}`,
+        );
+      });
+      console.log(newTire);
       return {
         success: true,
         msg: 'Tire add successfully!',
       };
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException({ description: error });
     }
   }
   async getTire(userID: string, tireID: string) {
@@ -50,10 +63,15 @@ export class TiresService {
         userID: userID,
         _id: tireID,
       });
-      if (!tire) throw new NotFoundException();
-      return tire;
+      if (!tire) {
+        throw new NotFoundException({ description: 'Not Found' });
+      }
+      return {
+        success: true,
+        tire,
+      };
     } catch (error) {
-      console.log(error);
+      console.log(error, 'asdas');
       throw new InternalServerErrorException();
     }
   }
@@ -70,9 +88,9 @@ export class TiresService {
     }
   }
 
-  async getPopulateTires() {
+  async getPopulateTires(queryParam: any) {
     try {
-      const tires = await this.tireModel.find();
+      const tires = await this.tireModel.find(queryParam);
       return tires;
     } catch (error) {
       console.log(error);
